@@ -1,5 +1,5 @@
 {
-    "name": "jarvus-ext-lazydata",
+    "name": "jarvus-lazydata",
     "type": "code",
     "creator": "Jarvus Innovations",
     "summary": "Lazy data loading overrides",
