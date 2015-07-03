@@ -1,4 +1,4 @@
-Ext.define('Jarvus.ext.override.data.StoreIsLoaded', {
+Ext.define('Jarvus.override.data.StoreIsLoaded', {
     override: 'Ext.data.Store',
 
     constructor: function() {
@@ -6,7 +6,7 @@ Ext.define('Jarvus.ext.override.data.StoreIsLoaded', {
             markLoaded = function() {
                 me.loaded= true;
             };
-        
+
         me.callParent(arguments);
 
         me.on({
