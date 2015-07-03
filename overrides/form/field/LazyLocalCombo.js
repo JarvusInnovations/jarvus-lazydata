@@ -1,4 +1,4 @@
-Ext.define('Jarvus.ext.override.form.field.LazyLocalCombo', {
+Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
     override: 'Ext.form.field.ComboBox',
 
     lazyAutoLoad: true,
