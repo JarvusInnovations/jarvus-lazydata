@@ -3,12 +3,14 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
 
     lazyAutoLoad: true,
 
-    doQuery: function doQuery() {
+    doQuery: function doQuery(rawQuery) {
         var me = this,
             args = arguments,
             previous = args.callee.$previous;
 
-        this.doLazyLoad(function() {
+        me.lastRawQuery = rawQuery;
+
+        me.doLazyLoad(function() {
             previous.apply(me, args);
         });
     },
@@ -21,7 +23,7 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
         if (Ext.isEmpty(value)) {
             previous.apply(me, args);
         } else {
-            this.doLazyLoad(function() {
+            me.doLazyLoad(function() {
                 previous.apply(me, args);
             });
         }
@@ -30,20 +32,30 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
     doLazyLoad: function(callback) {
         var me = this,
             store = me.getStore(),
-            isLoading = store.isLoading(),
-            rawValue = me.getRawValue(),
-            onLoad = function() {
-                me.setRawValue(rawValue);
-                Ext.callback(callback);
-            };
+            onLoad;
 
-        if (me.queryMode == 'local' && me.lazyAutoLoad && !isLoading && !store.isLoaded()) {
-            me.expand();
-            store.load({ callback: onLoad });
-        } else if (isLoading) {
+        // do nothing if there's nothing to do
+        if (me.queryMode != 'local' || !me.lazyAutoLoad || store.isLoaded()) {
+            Ext.callback(callback);
+            return;
+        }
+
+        onLoad = function() {
+            var lastRawQuery = me.lastRawQuery;
+
+            if (lastRawQuery) {
+                me.lastRawQuery = null;
+                me.setRawValue(lastRawQuery);
+            }
+
+            Ext.callback(callback);
+        };
+
+        if (store.isLoading()) {
             store.on('load', onLoad, me, { single: true });
         } else {
-            Ext.callback(callback);
+            me.expand();
+            store.load({ callback: onLoad });
         }
     }
 });
