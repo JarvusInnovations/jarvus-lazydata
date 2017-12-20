@@ -10,7 +10,7 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
 
         me.lastRawQuery = rawQuery;
 
-        me.doLazyLoad(function() {
+        me.doLazyLoad(true, function() {
             previous.apply(me, args);
         });
     },
@@ -23,13 +23,13 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
         if (Ext.isEmpty(value)) {
             previous.apply(me, args);
         } else {
-            me.doLazyLoad(function() {
+            me.doLazyLoad(false, function() {
                 previous.apply(me, args);
             });
         }
     },
 
-    doLazyLoad: function(callback) {
+    doLazyLoad: function(expandBeforeLoad, callback) {
         var me = this,
             store = me.getStore(),
             onLoad;
@@ -54,7 +54,10 @@ Ext.define('Jarvus.override.form.field.LazyLocalCombo', {
         if (store.isLoading()) {
             store.on('load', onLoad, me, { single: true });
         } else {
-            me.expand();
+            if (expandBeforeLoad) {
+                me.expand();
+            }
+
             store.load({ callback: onLoad });
         }
     }
