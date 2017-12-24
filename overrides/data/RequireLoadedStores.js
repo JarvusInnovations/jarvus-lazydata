@@ -4,9 +4,9 @@ Ext.define('Jarvus.override.data.RequireLoadedStores', {
     requireLoaded: function(stores, callback, scope) {
         var me = this,
             queue = Ext.Array.clone(stores),
-            _storeLoaded;
+            storeLoaded;
 
-        _storeLoaded = function(loadedStoreId) {
+        storeLoaded = function(loadedStoreId) {
             Ext.Array.remove(queue, loadedStoreId);
 
             if (!queue.length) {
@@ -18,13 +18,13 @@ Ext.define('Jarvus.override.data.RequireLoadedStores', {
             var store = me.lookup(storeId);
 
             if (store.isLoaded()) {
-                _storeLoaded(storeId);
+                storeLoaded(storeId);
                 return;
             }
 
             store.on('load', function() {
-                _storeLoaded(storeId);
-            }, me, {single: true});
+                storeLoaded(storeId);
+            }, me, { single: true });
 
             if (!store.isLoading()) {
                 store.load();

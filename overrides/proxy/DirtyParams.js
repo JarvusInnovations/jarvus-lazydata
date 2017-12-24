@@ -1,5 +1,3 @@
-/* jshint undef: true, unused: true, browser: true, quotmark: single, curly: true */
-/* global Ext */
 Ext.define('Jarvus.override.proxy.DirtyParams', {
     override: 'Ext.data.proxy.Server',
 
