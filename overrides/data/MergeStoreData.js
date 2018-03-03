@@ -14,7 +14,6 @@ Ext.define('Jarvus.override.data.MergeStoreData', {
      * @param {Object[]} data Array of raw record data
      * @param {Object} [options]
      * @param {boolean} [options.removeMissing=false] True to remove all existing records not present in the incoming array
-     * @param {boolean} [options.records=false] True if provided array contains already-instantiated records rather than raw data
      */
     mergeData: function(data, options) {
         options = options || {};
@@ -103,7 +102,6 @@ Ext.define('Jarvus.override.data.MergeStoreData', {
         me.fetch({
             callback: function(incomingRecords) {
                 me.mergeData(incomingRecords, {
-                    records: true,
                     removeMissing: removeMissing
                 });
             }
