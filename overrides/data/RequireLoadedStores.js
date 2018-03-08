@@ -1,34 +1,40 @@
 Ext.define('Jarvus.override.data.RequireLoadedStores', {
     override: 'Ext.data.StoreManager',
 
+
     requireLoaded: function(stores, callback, scope) {
         var me = this,
-            queue = Ext.Array.clone(stores),
-            storeLoaded;
+            storesLength = stores.length,
+            storeIndex = 0, store,
+            queue = [],
+            onStoreLoad = function(store) {
+                if (store) {
+                    Ext.Array.remove(queue, store);
+                }
 
-        storeLoaded = function(loadedStoreId) {
-            Ext.Array.remove(queue, loadedStoreId);
+                if (!queue.length) {
+                    Ext.callback(callback, scope || me);
+                }
+            };
 
-            if (!queue.length) {
-                Ext.callback(callback, scope || me);
-            }
-        };
-
-        Ext.Array.each(stores, function(storeId) {
-            var store = me.lookup(storeId);
+        // lookup and add all unloaded stores to queue
+        for (; storeIndex < storesLength; storeIndex++) {
+            store = me.lookup(stores[storeIndex]);
 
             if (store.isLoaded()) {
-                storeLoaded(storeId);
-                return;
+                continue;
             }
 
-            store.on('load', function() {
-                storeLoaded(storeId);
-            }, me, { single: true });
+            queue.push(store);
+
+            store.on('load', onStoreLoad, me, { single: true });
 
             if (!store.isLoading()) {
                 store.load();
             }
-        });
+        }
+
+        // call immediately in case queue is already empty
+        onStoreLoad();
     }
 });
